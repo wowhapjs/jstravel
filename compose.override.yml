@@ -1,6 +1,0 @@
-services:
-  web:
-    build: null
-    image: nginx:alpine
-    volumes:
-      - /srv/site-content/jstravel:/usr/share/nginx/html:ro
