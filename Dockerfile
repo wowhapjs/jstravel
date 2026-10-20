@@ -8,6 +8,7 @@ COPY payload6/part-000.b64 /payload6/part-000.b64
 COPY payload6/part-001.b64 /payload6/part-001.b64
 COPY tail-final/ /tail-final/
 COPY mumbai-v12.patch.gz /mumbai-v12.patch.gz
+COPY mumbai-v12-mapfix.patch.gz /mumbai-v12-mapfix.patch.gz
 RUN { \
       cat /payload2/part-000.b64; \
       cat /payload2/part-001.b64; \
@@ -32,6 +33,8 @@ RUN { \
  && unzip -q /tmp/site.zip -d /tmp/site \
  && echo '0631eef222694276d5d4d96559b1da7e92ff8357ec332109f2fa82dca17f41af  /mumbai-v12.patch.gz' | sha256sum -c - \
  && gzip -dc /mumbai-v12.patch.gz | patch -d /tmp/site/india-night-transit-trip-planner-v7 -p0 --batch --forward \
+ && echo '625c3e6a0f23a66f655ee0ae96b1f32d443570fb2ba8580513a5a1aa2634c1db  /mumbai-v12-mapfix.patch.gz' | sha256sum -c - \
+ && gzip -dc /mumbai-v12-mapfix.patch.gz | patch -d /tmp/site/india-night-transit-trip-planner-v7 -p0 --batch --forward \
  && cp -a /tmp/site/india-night-transit-trip-planner-v7/. /out/ \
  && test -f /out/index.html
 
