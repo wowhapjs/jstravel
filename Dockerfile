@@ -1,4 +1,4 @@
-FROM alpine:3.22 AS unpack
+FROM node:22-alpine AS unpack
 WORKDIR /work
 RUN apk add --no-cache patch
 COPY payload2/ /payload2/
@@ -9,6 +9,7 @@ COPY payload6/part-001.b64 /payload6/part-001.b64
 COPY tail-final/ /tail-final/
 COPY mumbai-v12.patch.gz /mumbai-v12.patch.gz
 COPY mumbai-v12-mapfix.patch.gz /mumbai-v12-mapfix.patch.gz
+COPY apply-hampi-v13.js /apply-hampi-v13.js
 RUN { \
       cat /payload2/part-000.b64; \
       cat /payload2/part-001.b64; \
@@ -35,6 +36,8 @@ RUN { \
  && gzip -dc /mumbai-v12.patch.gz | patch -d /tmp/site/india-night-transit-trip-planner-v7 -p0 --batch --forward \
  && echo '625c3e6a0f23a66f655ee0ae96b1f32d443570fb2ba8580513a5a1aa2634c1db  /mumbai-v12-mapfix.patch.gz' | sha256sum -c - \
  && gzip -dc /mumbai-v12-mapfix.patch.gz | patch -d /tmp/site/india-night-transit-trip-planner-v7 -p0 --batch --forward \
+ && node /apply-hampi-v13.js /tmp/site/india-night-transit-trip-planner-v7/data.js \
+ && node -e "global.window={};require('/tmp/site/india-night-transit-trip-planner-v7/data.js');const h=window.TRIP_DATA.cities.hampi;const ids=a=>a.map(x=>x.id);const names=a=>a.map(x=>String(x.name||'').trim().toLowerCase());const dup=a=>new Set(a).size!==a.length;if(window.TRIP_DATA.version!==13||h.attractions.length!==38||h.restaurants.length!==36||dup(ids(h.attractions))||dup(names(h.attractions))||dup(ids(h.restaurants))||dup(names(h.restaurants)))process.exit(1);" \
  && cp -a /tmp/site/india-night-transit-trip-planner-v7/. /out/ \
  && test -f /out/index.html
 
