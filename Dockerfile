@@ -11,6 +11,7 @@ COPY mumbai-v12.patch.gz /mumbai-v12.patch.gz
 COPY mumbai-v12-mapfix.patch.gz /mumbai-v12-mapfix.patch.gz
 COPY apply-hampi-v13.js /apply-hampi-v13.js
 COPY hampi-v13-photo-fix.js /hampi-v13-photo-fix.js
+COPY apply-hyderabad-v14.js /apply-hyderabad-v14.js
 RUN { \
       cat /payload2/part-000.b64; \
       cat /payload2/part-001.b64; \
@@ -39,7 +40,8 @@ RUN { \
  && gzip -dc /mumbai-v12-mapfix.patch.gz | patch -d /tmp/site/india-night-transit-trip-planner-v7 -p0 --batch --forward \
  && node /apply-hampi-v13.js /tmp/site/india-night-transit-trip-planner-v7/data.js \
  && node /hampi-v13-photo-fix.js /tmp/site/india-night-transit-trip-planner-v7/data.js \
- && node -e "global.window={};require('/tmp/site/india-night-transit-trip-planner-v7/data.js');const h=window.TRIP_DATA.cities.hampi,k=h.attractions.find(x=>x.id==='ham-att-kodandarama');const ids=a=>a.map(x=>x.id);const names=a=>a.map(x=>String(x.name||'').trim().toLowerCase());const dup=a=>new Set(a).size!==a.length;if(window.TRIP_DATA.version!==13||h.attractions.length!==38||h.restaurants.length!==36||dup(ids(h.attractions))||dup(names(h.attractions))||dup(ids(h.restaurants))||dup(names(h.restaurants))||k.commonsQuery!=='Galigopuram ruins of Kodandarama Temple Hampi')process.exit(1);" \
+ && node /apply-hyderabad-v14.js /tmp/site/india-night-transit-trip-planner-v7 \
+ && node -e "global.window={};require('/tmp/site/india-night-transit-trip-planner-v7/data.js');const h=window.TRIP_DATA.cities.hampi,k=h.attractions.find(x=>x.id==='ham-att-kodandarama');const ids=a=>a.map(x=>x.id);const names=a=>a.map(x=>String(x.name||'').trim().toLowerCase());const dup=a=>new Set(a).size!==a.length;if(window.TRIP_DATA.version!==14||h.attractions.length!==38||h.restaurants.length!==36||dup(ids(h.attractions))||dup(names(h.attractions))||dup(ids(h.restaurants))||dup(names(h.restaurants))||k.commonsQuery!=='Galigopuram ruins of Kodandarama Temple Hampi')process.exit(1);" \
  && cp -a /tmp/site/india-night-transit-trip-planner-v7/. /out/ \
  && test -f /out/index.html
 
